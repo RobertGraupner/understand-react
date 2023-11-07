@@ -1,41 +1,24 @@
 import { useState } from 'react';
-import { Review } from './Review';
 
-const initialReviews = [
-	{ author: 'Andrzej', text: 'Bardzo fajny film', id: 1 },
-	{ author: 'Marek', text: 'Nie podobał mi się', id: 2 },
-];
-
-export function Form() {
-	const [reviews, setReview] = useState(initialReviews);
+export function Form({ onReviewSubmit }) {
 	const [inputValue, setInputValue] = useState('');
 	const [textareaValue, setTextareaValue] = useState('');
 
 	function handleSubmit(e) {
 		e.preventDefault();
+
 		const author = inputValue;
 		const text = textareaValue;
-		const id = reviews.length + 1;
-		const newReview = { author, text, id };
-		// bezpieczniejszy zapis z funkcją callback w przypadku gdy stan zależy od poprzedniego stanu
-		setReview((prevReviews) => [...prevReviews, newReview]);
+		// funkcja przekazana przez propsy
+		onReviewSubmit(author, text);
+
 		setInputValue('');
 		setTextareaValue('');
 	}
 
-	const reviewsList = reviews.map((rev) => (
-		<Review key={rev.id} author={rev.author} text={rev.text} />
-	));
-
 	return (
 		<>
-			{reviews && (
-				<>
-					<h2>Lista recenzji</h2>
-					{reviewsList}
-				</>
-			)}
-
+			<hr />
 			<h2>Dodaj recenzję</h2>
 			<form onSubmit={handleSubmit}>
 				<div>
@@ -47,8 +30,8 @@ export function Form() {
 						name='author'
 						id='author'
 						value={inputValue}
-						onChange={(event) => {
-							setInputValue(event.target.value);
+						onChange={(e) => {
+							setInputValue(e.target.value);
 						}}
 					/>
 				</div>
@@ -60,8 +43,8 @@ export function Form() {
 						name='text'
 						id='text'
 						value={textareaValue}
-						onChange={(event) => {
-							setTextareaValue(event.target.value);
+						onChange={(e) => {
+							setTextareaValue(e.target.value);
 						}}></textarea>
 				</div>
 				<button
